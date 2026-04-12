@@ -1,0 +1,55 @@
+name: Safe Settings Sync
+
+on:
+  # Apply settings immediately when this repo changes
+  push:
+    branches:
+      - main
+  # Drift prevention: re-sync every 4 hours even if nothing changed
+  # (catches manual changes made directly in the GitHub UI)
+  schedule:
+    - cron: "0 */4 * * *"
+  # Allow manual trigger from the Actions tab
+  workflow_dispatch: {}
+
+jobs:
+  sync:
+    name: Sync org settings
+    runs-on: ubuntu-latest
+    env:
+      SAFE_SETTINGS_VERSION: 2.1.10
+      SAFE_SETTINGS_CODE_DIR: ${{ github.workspace }}/.safe-settings-code
+    steps:
+      - name: Checkout admin repo (settings source)
+        uses: actions/checkout@v4
+
+      - name: Checkout safe-settings app
+        uses: actions/checkout@v4
+        with:
+          repository: github/safe-settings
+          ref: ${{ env.SAFE_SETTINGS_VERSION }}
+          path: ${{ env.SAFE_SETTINGS_CODE_DIR }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ${{ env.SAFE_SETTINGS_CODE_DIR }}/.nvmrc
+          cache: npm
+          cache-dependency-path: ${{ env.SAFE_SETTINGS_CODE_DIR }}/package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ${{ env.SAFE_SETTINGS_CODE_DIR }}
+
+      - name: Run full sync
+        run: npm run full-sync
+        working-directory: ${{ env.SAFE_SETTINGS_CODE_DIR }}
+        env:
+          GH_ORG: ${{ vars.SAFE_SETTINGS_GH_ORG }}
+          APP_ID: ${{ vars.SAFE_SETTINGS_APP_ID }}
+          PRIVATE_KEY: ${{ secrets.SAFE_SETTINGS_PRIVATE_KEY }}
+          GITHUB_CLIENT_ID: ${{ vars.SAFE_SETTINGS_GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.SAFE_SETTINGS_GITHUB_CLIENT_SECRET }}
+          ADMIN_REPO: admin
+          # deployment-settings.yml is at the root of this (admin) repo
+          DEPLOYMENT_CONFIG_FILE: ${{ github.workspace }}/deployment-settings.yml
