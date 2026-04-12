@@ -1,0 +1,65 @@
+# ============================================================
+# EXAMPLE — team-based suborg
+# ============================================================
+# This file is in a subdirectory and is IGNORED by safe-settings.
+# Copy it to .github/suborgs/data-team.yml to activate it.
+#
+# A suborg can be defined by repo name patterns (suborgrepos),
+# by team membership (suborgteams), or by custom properties (suborgproperties).
+# You can combine them — a repo only needs to match ONE of the criteria.
+# ============================================================
+
+# All repos that the data-team is a collaborator on get these settings.
+suborgteams:
+  - data-team
+
+# Can also match by name pattern:
+# suborgrepos:
+#   - "data-*"
+#   - "*-pipeline"
+#   - "*-analytics"
+
+# Or by custom property (set on repos via GitHub UI or API):
+# suborgproperties:
+#   - team: data
+
+teams:
+  - name: data-team
+    permission: admin    # Data team owns their repos
+  - name: engineering
+    permission: push
+  - name: platform
+    permission: push
+
+# Data repos often have longer-lived feature branches and less strict PR cadence.
+# Adjust as needed.
+branches:
+  - name: default
+    protection:
+      required_pull_request_reviews:
+        required_approving_review_count: 1
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: false
+        require_last_push_approval: false
+      required_status_checks:
+        strict: false    # Data pipelines sometimes depend on external data — relaxed
+        contexts:
+          - "{{EXTERNALLY_DEFINED}}"
+      enforce_admins: false
+      required_conversation_resolution: true
+      allow_force_pushes: false
+      allow_deletions: false
+      restrictions: null
+
+# Custom labels specific to data work
+labels:
+  include:
+    - name: "data quality"
+      color: "0075ca"
+      description: "Data quality or correctness issue"
+    - name: "pipeline"
+      color: "e4e669"
+      description: "ETL/ELT pipeline related"
+    - name: "schema change"
+      color: "b60205"
+      description: "Involves a schema migration or contract change"

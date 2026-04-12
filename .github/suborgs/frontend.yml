@@ -1,0 +1,41 @@
+# ============================================================
+# Suborg: Frontend applications
+# ============================================================
+# Applies to any repo whose name matches one of the patterns below.
+# Settings here are merged on top of .github/settings.yml.
+#
+# Typical repos: dashboard-app, marketing-web, design-system-ui, mobile-frontend
+# ============================================================
+
+suborgrepos:
+  - "*-app"
+  - "*-web"
+  - "*-ui"
+  - "*-frontend"
+  - "*-mobile"
+  - "*-extension"
+
+teams:
+  - name: engineering
+    permission: push
+  - name: platform
+    permission: admin
+
+# Same protection as backend. Frontend deployments can be just as critical.
+branches:
+  - name: default
+    protection:
+      required_pull_request_reviews:
+        required_approving_review_count: 1
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: false
+        require_last_push_approval: false
+      required_status_checks:
+        strict: true
+        contexts:
+          - "{{EXTERNALLY_DEFINED}}"
+      enforce_admins: false
+      required_conversation_resolution: true
+      allow_force_pushes: false
+      allow_deletions: false
+      restrictions: null

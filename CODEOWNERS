@@ -1,0 +1,20 @@
+# CODEOWNERS — admin repo
+# Changes to org-wide settings require platform team approval.
+# Changes to suborg settings require either platform or the relevant team lead.
+#
+# Syntax: <pattern> <owner> [<owner>...]
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default: platform team owns everything
+*                                   @IntegratedDynamic/platform
+
+# Org-wide settings — platform team only
+.github/settings.yml                @IntegratedDynamic/platform
+
+# Suborg settings — platform team, but specific teams can propose changes to their own
+.github/suborgs/backend.yml         @IntegratedDynamic/platform @IntegratedDynamic/engineering
+.github/suborgs/frontend.yml        @IntegratedDynamic/platform @IntegratedDynamic/engineering
+.github/suborgs/infrastructure.yml  @IntegratedDynamic/platform
+
+# Deployment config — platform only (this controls the app itself)
+deployment-settings.yml             @IntegratedDynamic/platform

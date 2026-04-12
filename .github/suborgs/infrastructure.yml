@@ -1,0 +1,46 @@
+# ============================================================
+# Suborg: Infrastructure & platform repos
+# ============================================================
+# Applies to repos that manage cloud infrastructure, GitOps, or platform tooling.
+# These repos get stricter protections: 2 reviews, last-push approval,
+# and only the platform team has admin access.
+#
+# Typical repos: infrastructure, gitops, terraform-aws, k8s-infra, platform-tools
+# ============================================================
+
+suborgrepos:
+  - "infrastructure"
+  - "gitops"
+  - "terraform-*"
+  - "*-infra"
+  - "platform-*"
+
+teams:
+  - name: platform
+    permission: admin
+  - name: engineering
+    permission: push   # Engineers can read and propose changes, platform approves
+
+# Stricter: 2 reviews required, last-push approval enforced.
+# Infra changes have blast radius — an extra pair of eyes is worth it.
+branches:
+  - name: default
+    protection:
+      required_pull_request_reviews:
+        required_approving_review_count: 2
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: true   # CODEOWNERS file should designate platform team
+        require_last_push_approval: true   # Last commit must be approved by someone else
+        bypass_pull_request_allowances:
+          apps: []
+          users: []
+          teams: []
+      required_status_checks:
+        strict: true
+        contexts:
+          - "{{EXTERNALLY_DEFINED}}"
+      enforce_admins: false   # Set to true if you want even admins to go through PR flow
+      required_conversation_resolution: true
+      allow_force_pushes: false
+      allow_deletions: false
+      restrictions: null

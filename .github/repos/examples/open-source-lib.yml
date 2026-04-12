@@ -1,0 +1,82 @@
+# ============================================================
+# EXAMPLE — open source / public repository
+# ============================================================
+# This file is in a subdirectory and is IGNORED by safe-settings.
+# Copy it to .github/repos/<your-repo-name>.yml to activate it.
+#
+# Use this template when open-sourcing a library or SDK.
+# ============================================================
+
+repository:
+  private: false
+  visibility: public
+  has_issues: true
+  has_wiki: false
+  has_projects: false
+
+  # Public repos should have a license and description
+  description: "One-line description for GitHub search"
+  homepage: "https://docs.yourcompany.com/your-lib"
+  topics:
+    - open-source
+
+  # Allow community contributions via forks
+  allow_squash_merge: true
+  allow_merge_commit: false
+  allow_rebase_merge: true
+  delete_branch_on_merge: true
+
+  security:
+    enableVulnerabilityAlerts: true
+    enableAutomatedSecurityFixes: true
+
+
+# Labels for community contributions
+labels:
+  include:
+    - name: "good first issue"
+      color: "7057ff"
+      description: "Good for newcomers — no deep context needed"
+    - name: "help wanted"
+      color: "008672"
+      description: "Community contribution welcome"
+    - name: "question"
+      color: "d876e3"
+      description: "Further information is requested"
+    - name: "wontfix"
+      color: "ffffff"
+      description: "This will not be worked on"
+    - name: "duplicate"
+      color: "cfd3d7"
+      description: "This issue or pull request already exists"
+    - name: "invalid"
+      color: "e4e669"
+      description: "This doesn't seem right"
+
+
+# Stricter branch protection for public repos:
+# require CODEOWNERS review so maintainers control what gets merged.
+branches:
+  - name: default
+    protection:
+      required_pull_request_reviews:
+        required_approving_review_count: 1
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: true   # Maintainers must approve community PRs
+        require_last_push_approval: false
+      required_status_checks:
+        strict: true
+        contexts:
+          - "{{EXTERNALLY_DEFINED}}"
+      enforce_admins: false
+      required_conversation_resolution: true
+      allow_force_pushes: false
+      allow_deletions: false
+      restrictions: null
+
+
+# Autolinks: link PR descriptions to your internal tracker
+# autolinks:
+#   - key_prefix: "LIN-"
+#     url_template: "https://linear.app/your-org/issue/LIN-<num>"
+#     is_alphanumeric: false

@@ -1,0 +1,44 @@
+# ============================================================
+# Suborg: Backend services
+# ============================================================
+# Applies to any repo whose name matches one of the patterns below.
+# Settings here are merged on top of .github/settings.yml.
+#
+# Typical repos: payments-api, auth-service, notification-worker, data-backend
+# ============================================================
+
+suborgrepos:
+  - "*-api"
+  - "*-service"
+  - "*-worker"
+  - "*-backend"
+  - "*-server"
+
+# Teams automatically added to every backend repo.
+# These teams must exist in the GitHub org.
+# Remove or adjust based on your actual team structure.
+teams:
+  - name: engineering
+    permission: push
+  - name: platform
+    permission: admin
+
+# Stricter than org default: branches must be up to date (strict: true),
+# ensuring CI always runs on the latest main before merge.
+branches:
+  - name: default
+    protection:
+      required_pull_request_reviews:
+        required_approving_review_count: 1
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: false
+        require_last_push_approval: false
+      required_status_checks:
+        strict: true   # Branch must be up to date with main before merge
+        contexts:
+          - "{{EXTERNALLY_DEFINED}}"
+      enforce_admins: false
+      required_conversation_resolution: true
+      allow_force_pushes: false
+      allow_deletions: false
+      restrictions: null

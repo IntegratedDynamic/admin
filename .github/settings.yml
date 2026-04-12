@@ -1,14 +1,27 @@
-# Org-wide repository defaults — applied to all repos in IntegratedDynamic
-# See https://github.com/github/safe-settings for full reference
+# ============================================================
+# Org-wide repository defaults — IntegratedDynamic
+# ============================================================
+# These settings are applied to ALL repositories in the org.
+# Suborg-level and repo-level settings are merged on top and take precedence.
+#
+# Hierarchy: repo > suborg > org (this file)
+# Suborgs: .github/suborgs/*.yml
+# Repo overrides: .github/repos/<repo-name>.yml
+# ============================================================
 
+# --- Repository defaults ---
+# See https://docs.github.com/en/rest/repos/repos#create-an-organization-repository
 repository:
   private: true
-  has_issues: true
-  has_projects: false
-  has_wiki: false
+  visibility: private
   default_branch: main
+
+  has_issues: true
+  has_projects: false   # Use a dedicated project management tool (Linear, Jira, etc.)
+  has_wiki: false       # Prefer docs-as-code in the repo itself
+
   allow_squash_merge: true
-  allow_merge_commit: false
+  allow_merge_commit: false  # Keep history clean — squash or rebase only
   allow_rebase_merge: true
   allow_auto_merge: false
   delete_branch_on_merge: true
@@ -17,3 +30,106 @@ repository:
   security:
     enableVulnerabilityAlerts: true
     enableAutomatedSecurityFixes: true
+
+
+# --- Labels ---
+# Standard label set across all repos. Enables consistent filtering in GitHub,
+# Linear, and any automation that reads issue/PR labels.
+#
+# Strategy: org defines the full taxonomy. Repos can add their own labels
+# on top (safe-settings merges by default, not replaces).
+labels:
+  include:
+    # --- Type ---
+    - name: "bug"
+      color: "d73a4a"
+      description: "Something isn't working as expected"
+    - name: "feature"
+      color: "0075ca"
+      description: "New feature or capability"
+    - name: "improvement"
+      color: "a2eeef"
+      description: "Enhancement to existing functionality"
+    - name: "chore"
+      color: "e4e669"
+      description: "Maintenance, dependency update, refactor — no user-facing impact"
+    - name: "docs"
+      color: "d4c5f9"
+      description: "Documentation only"
+    - name: "test"
+      color: "bfd4f2"
+      description: "Test coverage, CI, or test infrastructure"
+
+    # --- Priority ---
+    - name: "priority: critical"
+      color: "b60205"
+      description: "Production is down or severely impacted — fix immediately"
+    - name: "priority: high"
+      color: "e11d48"
+      description: "Significant impact, should be addressed this sprint"
+    - name: "priority: medium"
+      color: "fbca04"
+      description: "Normal priority"
+    - name: "priority: low"
+      color: "c2e0c6"
+      description: "Nice to have, no urgency"
+
+    # --- Status ---
+    - name: "status: blocked"
+      color: "e4e669"
+      description: "Blocked by another issue or external dependency"
+    - name: "status: needs review"
+      color: "0e8a16"
+      description: "Ready for review"
+    - name: "status: wip"
+      color: "006b75"
+      description: "Work in progress — not ready for review yet"
+
+    # --- Risk ---
+    - name: "breaking change"
+      color: "b60205"
+      description: "Introduces a breaking change to the public API or contract"
+    - name: "security"
+      color: "b60205"
+      description: "Security vulnerability or hardening"
+
+    # --- Community (kept for open source hygiene) ---
+    - name: "good first issue"
+      color: "7057ff"
+      description: "Good for newcomers"
+    - name: "help wanted"
+      color: "008672"
+      description: "Extra attention or contribution needed"
+
+  exclude:
+    # Never delete labels that start with "release" — managed by the release workflow
+    - name: "^release"
+
+
+# --- Branch protection (default branch) ---
+# Baseline: 1 review, conversations must be resolved, no force pushes.
+# CI checks are intentionally left as EXTERNALLY_DEFINED so each repo's
+# own workflow registers its required checks without safe-settings overwriting them.
+#
+# Suborgs can override this (e.g. backend requires strict=true, infra requires 2 reviews).
+branches:
+  - name: default
+    protection:
+      required_pull_request_reviews:
+        required_approving_review_count: 1
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: false
+        require_last_push_approval: false
+        bypass_pull_request_allowances:
+          apps: []
+          users: []
+          teams: []
+      required_status_checks:
+        strict: false
+        contexts:
+          - "{{EXTERNALLY_DEFINED}}"
+      enforce_admins: false
+      required_conversation_resolution: true
+      allow_force_pushes: false
+      allow_deletions: false
+      restrictions: null

@@ -1,0 +1,95 @@
+# ============================================================
+# EXAMPLE — repo-level override
+# ============================================================
+# This file is in a subdirectory and is IGNORED by safe-settings.
+# Copy it to .github/repos/<your-repo-name>.yml to activate it.
+#
+# Repo-level settings are merged on top of suborg + org settings.
+# Only include keys you want to OVERRIDE — everything else inherits.
+# ============================================================
+
+# --- Force-create the repo if it doesn't exist yet ---
+# Useful for bootstrapping: push this file, safe-settings creates the repo.
+repository:
+  force_create: true         # Create the repo if it doesn't exist in the org
+  # template: template-service  # Uncomment to initialize from a template repo
+  description: "Short description shown on GitHub"
+  homepage: ""
+  topics:
+    - nodejs
+    - api
+  # Override visibility (defaults to org-level private)
+  # private: false
+  # visibility: public
+
+
+# --- Teams ---
+# Override team access for this specific repo.
+# Useful for: giving a specific team admin on their own service.
+teams:
+  - name: engineering
+    permission: push
+  - name: platform
+    permission: admin
+  # Example: give a specific sub-team write access to their service
+  # - name: payments-team
+  #   permission: push
+
+
+# --- Collaborators ---
+# Add specific GitHub users (outside the org or for special cases).
+# Cannot grant admin — enforced by deployment-settings.yml configvalidator.
+# collaborators:
+#   - username: contractor-github-handle
+#     permission: push
+#     include:
+#       - this-repo-only
+
+
+# --- Branch protection override ---
+# Only needed if this repo differs from the suborg default.
+# Example: a critical payments service requiring 2 reviews instead of 1.
+# branches:
+#   - name: default
+#     protection:
+#       required_pull_request_reviews:
+#         required_approving_review_count: 2
+#         dismiss_stale_reviews: true
+#         require_code_owner_reviews: true
+#         require_last_push_approval: true
+#       required_status_checks:
+#         strict: true
+#         contexts:
+#           - "{{EXTERNALLY_DEFINED}}"
+#       enforce_admins: false
+#       required_conversation_resolution: true
+#       allow_force_pushes: false
+#       allow_deletions: false
+
+
+# --- Additional labels specific to this repo ---
+# labels:
+#   include:
+#     - name: "payments"
+#       color: "0075ca"
+#       description: "Payments-related issue"
+
+
+# --- Autolinks ---
+# Link issue tracker references in commits/PRs automatically.
+# autolinks:
+#   - key_prefix: "LIN-"
+#     url_template: "https://linear.app/your-org/issue/LIN-<num>"
+#     is_alphanumeric: false
+#   - key_prefix: "JIRA-"
+#     url_template: "https://yourcompany.atlassian.net/browse/JIRA-<num>"
+#     is_alphanumeric: false
+
+
+# --- Custom properties ---
+# Set custom properties for filtering/suborg matching.
+# custom_properties:
+#   - name: "team"
+#     value: "payments"
+#   - name: "tier"
+#     value: "critical"
