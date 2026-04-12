@@ -17,7 +17,7 @@ jobs:
     name: Sync org settings
     runs-on: ubuntu-latest
     env:
-      SAFE_SETTINGS_VERSION: 2.1.10
+      SAFE_SETTINGS_VERSION: 2.1.19
       SAFE_SETTINGS_CODE_DIR: ${{ github.workspace }}/.safe-settings-code
     steps:
       - name: Checkout admin repo (settings source)
