@@ -50,6 +50,7 @@ jobs:
           PRIVATE_KEY: ${{ secrets.SAFE_SETTINGS_PRIVATE_KEY }}
           GITHUB_CLIENT_ID: ${{ vars.SAFE_SETTINGS_GITHUB_CLIENT_ID }}
           GITHUB_CLIENT_SECRET: ${{ secrets.SAFE_SETTINGS_GITHUB_CLIENT_SECRET }}
+          WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
           ADMIN_REPO: admin
           # deployment-settings.yml is at the root of this (admin) repo
           DEPLOYMENT_CONFIG_FILE: ${{ github.workspace }}/deployment-settings.yml
