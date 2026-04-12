@@ -33,7 +33,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: ${{ env.SAFE_SETTINGS_CODE_DIR }}/.nvmrc
+          node-version: '22'
           cache: npm
           cache-dependency-path: ${{ env.SAFE_SETTINGS_CODE_DIR }}/package-lock.json
 
