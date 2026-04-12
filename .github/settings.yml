@@ -1,0 +1,19 @@
+# Org-wide repository defaults — applied to all repos in IntegratedDynamic
+# See https://github.com/github/safe-settings for full reference
+
+repository:
+  private: true
+  has_issues: true
+  has_projects: false
+  has_wiki: false
+  default_branch: main
+  allow_squash_merge: true
+  allow_merge_commit: false
+  allow_rebase_merge: true
+  allow_auto_merge: false
+  delete_branch_on_merge: true
+  allow_update_branch: true
+
+  security:
+    enableVulnerabilityAlerts: true
+    enableAutomatedSecurityFixes: true
