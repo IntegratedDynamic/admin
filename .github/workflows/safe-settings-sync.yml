@@ -13,9 +13,9 @@ on:
   workflow_dispatch:
     inputs:
       nop:
-        description: 'Dry-run mode: show diffs without applying (true/false)'
+        description: "Dry-run mode: show diffs without applying (true/false)"
         required: false
-        default: 'false'
+        default: "false"
 
 jobs:
   sync:
@@ -38,7 +38,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
           cache: npm
           cache-dependency-path: ${{ env.SAFE_SETTINGS_CODE_DIR }}/package-lock.json
 

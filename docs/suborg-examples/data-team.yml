@@ -25,7 +25,7 @@ suborgteams:
 
 teams:
   - name: data-team
-    permission: admin    # Data team owns their repos
+    permission: admin # Data team owns their repos
   - name: engineering
     permission: push
   - name: platform
@@ -42,7 +42,7 @@ branches:
         require_code_owner_reviews: false
         require_last_push_approval: false
       required_status_checks:
-        strict: false    # Data pipelines sometimes depend on external data — relaxed
+        strict: false # Data pipelines sometimes depend on external data — relaxed
         contexts:
           - "{{EXTERNALLY_DEFINED}}"
       enforce_admins: false

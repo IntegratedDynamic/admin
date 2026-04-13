@@ -1,14 +1,19 @@
 # admin
 
-Policy-as-code for the IntegratedDynamic GitHub org. All repository settings (branch protection, labels, merge strategies, team permissions) are declared here and enforced automatically via [safe-settings](https://github.com/github/safe-settings).
+Policy-as-code for the IntegratedDynamic GitHub org. All repository settings (branch protection,
+labels, merge strategies, team permissions) are declared here and enforced automatically via
+[safe-settings](https://github.com/github/safe-settings).
 
-> **One rule:** never configure repos directly in the GitHub UI. Everything goes through this repo. If GitHub and this repo disagree, the next sync will overwrite GitHub.
+> **One rule:** never configure repos directly in the GitHub UI. Everything goes through this repo.
+> If GitHub and this repo disagree, the next sync will overwrite GitHub.
 
 ---
 
 ## How it works
 
-A GitHub Actions workflow runs safe-settings on every push to `main`, on a 4-hour schedule (drift prevention), and on manual trigger. safe-settings reads the config files in this repo and reconciles every repo in the org with what's declared.
+A GitHub Actions workflow runs safe-settings on every push to `main`, on a 4-hour schedule (drift
+prevention), and on manual trigger. safe-settings reads the config files in this repo and reconciles
+every repo in the org with what's declared.
 
 ```
 push to main  ──►  safe-settings-sync workflow  ──►  GitHub API  ──►  repos updated
@@ -18,7 +23,8 @@ schedule (every 4h)
 manual trigger (with optional dry-run)
 ```
 
-The app code itself is checked out from the official `github/safe-settings@2.1.17` public repo — there is no fork to maintain.
+The app code itself is checked out from the official `github/safe-settings@2.1.17` public repo —
+there is no fork to maintain.
 
 ---
 
@@ -51,12 +57,12 @@ You only need to declare what **changes** at each level. Everything else is inhe
 
 ### What each level controls
 
-| File | Scope | Typical use |
-|---|---|---|
-| `settings.yml` | Every repo in the org | Labels, default branch, merge strategies, baseline branch protection |
-| `suborgs/*.yml` | Repos matching name patterns | Stricter reviews for infra, strict CI for backend/frontend |
-| `repos/<name>.yml` | One specific repo | Custom description, extra labels, relaxed or tightened rules |
-| `deployment-settings.yml` | The safe-settings app itself | Which repos to ignore, config validators |
+| File                      | Scope                        | Typical use                                                          |
+| ------------------------- | ---------------------------- | -------------------------------------------------------------------- |
+| `settings.yml`            | Every repo in the org        | Labels, default branch, merge strategies, baseline branch protection |
+| `suborgs/*.yml`           | Repos matching name patterns | Stricter reviews for infra, strict CI for backend/frontend           |
+| `repos/<name>.yml`        | One specific repo            | Custom description, extra labels, relaxed or tightened rules         |
+| `deployment-settings.yml` | The safe-settings app itself | Which repos to ignore, config validators                             |
 
 ---
 
@@ -87,38 +93,116 @@ gh run view <run-id> --repo IntegratedDynamic/admin --log | grep "There are chan
 
 ### Dry-run (NOP mode)
 
-The workflow can be triggered in dry-run mode at any time — it shows every diff it *would* apply without touching anything:
+The workflow can be triggered in dry-run mode at any time — it shows every diff it _would_ apply
+without touching anything:
 
 ```bash
 gh workflow run safe-settings-sync.yml --repo IntegratedDynamic/admin -f nop=true
 ```
 
-NOP runs use `LOG_LEVEL=debug` automatically. Look for `There are changes for branch` lines in the output for a diff summary.
+NOP runs use `LOG_LEVEL=debug` automatically. Look for `There are changes for branch` lines in the
+output for a diff summary.
 
 ### What to edit
 
-| I want to… | Edit this file |
-|---|---|
-| Change a setting for **all repos** | `.github/settings.yml` |
-| Change a setting for **all backend services** | `.github/suborgs/backend.yml` |
-| Add a **new category** of repos with their own rules | Create `.github/suborgs/<name>.yml` |
-| Override settings for **one specific repo** | Create `.github/repos/<repo-name>.yml` |
-| Prevent safe-settings from touching a repo | Add it to `deployment-settings.yml` → `restrictedRepos.exclude` |
-| Add a global validation rule | Edit `deployment-settings.yml` → `configvalidators` or `overridevalidators` |
+| I want to…                                           | Edit this file                                                              |
+| ---------------------------------------------------- | --------------------------------------------------------------------------- |
+| Change a setting for **all repos**                   | `.github/settings.yml`                                                      |
+| Change a setting for **all backend services**        | `.github/suborgs/backend.yml`                                               |
+| Add a **new category** of repos with their own rules | Create `.github/suborgs/<name>.yml`                                         |
+| Override settings for **one specific repo**          | Create `.github/repos/<repo-name>.yml`                                      |
+| Prevent safe-settings from touching a repo           | Add it to `deployment-settings.yml` → `restrictedRepos.exclude`             |
+| Add a global validation rule                         | Edit `deployment-settings.yml` → `configvalidators` or `overridevalidators` |
+
+---
+
+## Local dev setup
+
+To format config files locally you need [mise](https://mise.jdx.dev/) and Node.js.
+
+### Install mise (if not already installed)
+
+```bash
+curl https://mise.run | sh
+# then reload your shell, or:
+source ~/.zshrc   # or ~/.bashrc
+```
+
+### Bootstrap the repo
+
+```bash
+# Install Node.js (version declared in .mise.toml)
+mise install
+
+# Install Prettier
+npm install
+
+# Format all files
+mise run fmt
+
+# Check formatting without writing (useful in CI or pre-commit)
+mise run fmt:check
+```
+
+Alternatively, use npm directly: `npm run fmt` / `npm run fmt:check`.
 
 ---
 
 ## Forking / adapting this for another org
 
+There are two ways to get started:
+
+### Option A — Fork `IntegratedDynamic/admin` (recommended)
+
+Fork this repo. You get the working GitHub Actions workflow, suborg structure, validators, and all
+the safe-settings quirks already worked around (see [Caveats](#caveats)). The fork will pin
+safe-settings at the same version (`2.1.17`) — don't upgrade without reading the Caveats section.
+
+After forking, follow steps 1–3 below, then clean up:
+
+- Replace suborg patterns in `.github/suborgs/*.yml` with your naming conventions
+- Update `deployment-settings.yml` → `restrictedRepos.exclude` to list repos you want to skip
+- Replace labels, branch protection settings, and descriptions in `.github/settings.yml`
+
+### Option B — Start from scratch
+
+Follow the official guides:
+
+- [GitHub Actions setup](https://github.com/github/safe-settings/blob/2.1.17/docs/github-action.md)
+  — how the workflow runs safe-settings without hosting your own server
+- [App creation and deployment](https://github.com/github/safe-settings/blob/2.1.17/docs/deploy.md)
+  — how to create the GitHub App and configure secrets
+
+Both options require the same GitHub App setup (steps 1–3 below).
+
+---
+
 ### 1. Create a GitHub App
 
 Go to your org → Settings → Developer settings → GitHub Apps → New GitHub App.
 
-Required permissions:
-- Repository: `Administration` (read/write), `Contents` (read), `Issues` (read/write), `Metadata` (read), `Pull requests` (read/write)
-- Organization: `Administration` (read/write), `Members` (read/write)
+**Required permissions** (taken from
+[app.yml at 2.1.17](https://github.com/github/safe-settings/blob/2.1.17/app.yml)):
 
-Subscribe to events: `Push`, `Repository`, `Pull request`, `Member`.
+| Permission                        | Level      |
+| --------------------------------- | ---------- |
+| Repository: `Administration`      | read/write |
+| Repository: `Contents`            | read/write |
+| Repository: `Checks`              | read/write |
+| Repository: `Issues`              | read/write |
+| Repository: `Metadata`            | read       |
+| Repository: `Pull requests`       | read/write |
+| Repository: `Commit statuses`     | read/write |
+| Repository: `Environments`        | read/write |
+| Repository: `Variables`           | read/write |
+| Repository: `Custom properties`   | read/write |
+| Organization: `Members`           | read/write |
+| Organization: `Administration`    | read/write |
+| Organization: `Custom properties` | admin      |
+
+**Subscribe to events:** `branch_protection_rule`, `check_run`, `check_suite`, `create`,
+`custom_property_values`, `member`, `pull_request`, `push`, `repository`, `repository_ruleset`,
+`team`
 
 Install the app on your org (all repositories).
 
@@ -126,20 +210,21 @@ Install the app on your org (all repositories).
 
 In the admin repo → Settings → Secrets and variables:
 
-| Name | Type | Value |
-|---|---|---|
-| `SAFE_SETTINGS_PRIVATE_KEY` | Secret | Private key of the GitHub App (PEM) |
-| `SAFE_SETTINGS_GITHUB_CLIENT_SECRET` | Secret | OAuth client secret of the GitHub App |
-| `WEBHOOK_SECRET` | Secret | A random secret used to validate webhook payloads |
-| `SAFE_SETTINGS_APP_ID` | Variable | App ID (shown on the GitHub App page) |
-| `SAFE_SETTINGS_GH_ORG` | Variable | Your org name (e.g. `MyOrg`) |
-| `SAFE_SETTINGS_GITHUB_CLIENT_ID` | Variable | OAuth client ID of the GitHub App |
+| Name                                 | Type     | Value                                             |
+| ------------------------------------ | -------- | ------------------------------------------------- |
+| `SAFE_SETTINGS_PRIVATE_KEY`          | Secret   | Private key of the GitHub App (PEM)               |
+| `SAFE_SETTINGS_GITHUB_CLIENT_SECRET` | Secret   | OAuth client secret of the GitHub App             |
+| `WEBHOOK_SECRET`                     | Secret   | A random secret used to validate webhook payloads |
+| `SAFE_SETTINGS_APP_ID`               | Variable | App ID (shown on the GitHub App page)             |
+| `SAFE_SETTINGS_GH_ORG`               | Variable | Your org name (e.g. `MyOrg`)                      |
+| `SAFE_SETTINGS_GITHUB_CLIENT_ID`     | Variable | OAuth client ID of the GitHub App                 |
 
 ### 3. Adapt the config
 
 - Edit `.github/settings.yml` — replace org-wide defaults with yours
 - Edit `suborgs/*.yml` — adjust patterns to match your repo naming conventions
-- Edit `deployment-settings.yml` — update `restrictedRepos.exclude` to list repos that manage their own settings
+- Edit `deployment-settings.yml` — update `restrictedRepos.exclude` to list repos that manage their
+  own settings
 
 ### 4. Push to main
 
@@ -149,7 +234,12 @@ The workflow triggers automatically. Check the Actions tab for the first sync ru
 
 ## Caveats
 
-- **No subdirectories inside `.github/suborgs/`** — safe-settings has a bug where a directory in that folder causes all alphabetically-subsequent `.yml` files to be silently skipped. Keep the suborgs folder flat.
-- **`contexts: []` not `contexts: ["some-placeholder"]`** — specifying a non-existent check context causes NOP mode to crash.
-- **`bypass_pull_request_allowances` only in `settings.yml`** — if you add it to both `settings.yml` and a suborg file, safe-settings' deep merge will concatenate the arrays and produce duplicates.
-- safe-settings version is pinned to `2.1.17`. Don't upgrade to `2.1.19+` — probot v14 changed log initialization in a way that breaks the full-sync entrypoint.
+- **No subdirectories inside `.github/suborgs/`** — safe-settings has a bug where a directory in
+  that folder causes all alphabetically-subsequent `.yml` files to be silently skipped. Keep the
+  suborgs folder flat.
+- **`contexts: []` not `contexts: ["some-placeholder"]`** — specifying a non-existent check context
+  causes NOP mode to crash.
+- **`bypass_pull_request_allowances` only in `settings.yml`** — if you add it to both `settings.yml`
+  and a suborg file, safe-settings' deep merge will concatenate the arrays and produce duplicates.
+- safe-settings version is pinned to `2.1.17`. Don't upgrade to `2.1.19+` — probot v14 changed log
+  initialization in a way that breaks the full-sync entrypoint.

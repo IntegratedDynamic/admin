@@ -9,8 +9,8 @@
 # Add any repo that manages its own settings independently.
 restrictedRepos:
   exclude:
-    - admin          # the settings repo itself
-    - .github        # org-level .github repo
+    - admin # the settings repo itself
+    - .github # org-level .github repo
     # safe-settings repo deleted — app runs from github/safe-settings via GitHub Actions
     # gitops and infrastructure are now managed — remove to re-exclude
 

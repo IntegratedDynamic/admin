@@ -17,11 +17,11 @@ repository:
   default_branch: main
 
   has_issues: true
-  has_projects: false   # Use a dedicated project management tool (Linear, Jira, etc.)
-  has_wiki: false       # Prefer docs-as-code in the repo itself
+  has_projects: false # Use a dedicated project management tool (Linear, Jira, etc.)
+  has_wiki: false # Prefer docs-as-code in the repo itself
 
   allow_squash_merge: true
-  allow_merge_commit: false  # Keep history clean — squash or rebase only
+  allow_merge_commit: false # Keep history clean — squash or rebase only
   allow_rebase_merge: true
   allow_auto_merge: false
   delete_branch_on_merge: true
@@ -30,7 +30,6 @@ repository:
   security:
     enableVulnerabilityAlerts: true
     enableAutomatedSecurityFixes: true
-
 
 # --- Labels ---
 # Standard label set across all repos. Enables consistent filtering in GitHub,
@@ -104,7 +103,6 @@ labels:
   exclude:
     # Never delete labels that start with "release" — managed by the release workflow
     - name: "^release"
-
 
 # --- Branch protection (default branch) ---
 # Baseline: 1 review, conversations must be resolved, no force pushes.

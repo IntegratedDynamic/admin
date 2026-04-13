@@ -1,0 +1,10 @@
+[tools]
+node = "lts"
+
+[tasks.fmt]
+run = "npx prettier --write ."
+description = "Format all files with Prettier"
+
+[tasks."fmt:check"]
+run = "npx prettier --check ."
+description = "Check formatting without writing"

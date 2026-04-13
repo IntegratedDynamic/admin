@@ -30,7 +30,6 @@ repository:
     enableVulnerabilityAlerts: true
     enableAutomatedSecurityFixes: true
 
-
 # Labels for community contributions
 labels:
   include:
@@ -53,7 +52,6 @@ labels:
       color: "e4e669"
       description: "This doesn't seem right"
 
-
 # Stricter branch protection for public repos:
 # require CODEOWNERS review so maintainers control what gets merged.
 branches:
@@ -62,7 +60,7 @@ branches:
       required_pull_request_reviews:
         required_approving_review_count: 1
         dismiss_stale_reviews: true
-        require_code_owner_reviews: true   # Maintainers must approve community PRs
+        require_code_owner_reviews: true # Maintainers must approve community PRs
         require_last_push_approval: false
       required_status_checks:
         strict: true
@@ -73,7 +71,6 @@ branches:
       allow_force_pushes: false
       allow_deletions: false
       restrictions: null
-
 
 # Autolinks: link PR descriptions to your internal tracker
 # autolinks:

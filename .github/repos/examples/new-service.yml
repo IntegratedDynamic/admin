@@ -11,7 +11,7 @@
 # --- Force-create the repo if it doesn't exist yet ---
 # Useful for bootstrapping: push this file, safe-settings creates the repo.
 repository:
-  force_create: true         # Create the repo if it doesn't exist in the org
+  force_create: true # Create the repo if it doesn't exist in the org
   # template: template-service  # Uncomment to initialize from a template repo
   description: "Short description shown on GitHub"
   homepage: ""
@@ -21,7 +21,6 @@ repository:
   # Override visibility (defaults to org-level public)
   # private: true
   # visibility: private
-
 
 # --- Teams ---
 # Override team access for this specific repo.
@@ -35,7 +34,6 @@ teams:
   # - name: payments-team
   #   permission: push
 
-
 # --- Collaborators ---
 # Add specific GitHub users (outside the org or for special cases).
 # Cannot grant admin — enforced by deployment-settings.yml configvalidator.
@@ -44,7 +42,6 @@ teams:
 #     permission: push
 #     include:
 #       - this-repo-only
-
 
 # --- Branch protection override ---
 # Only needed if this repo differs from the suborg default.
@@ -66,14 +63,12 @@ teams:
 #       allow_force_pushes: false
 #       allow_deletions: false
 
-
 # --- Additional labels specific to this repo ---
 # labels:
 #   include:
 #     - name: "payments"
 #       color: "0075ca"
 #       description: "Payments-related issue"
-
 
 # --- Autolinks ---
 # Link issue tracker references in commits/PRs automatically.
@@ -84,7 +79,6 @@ teams:
 #   - key_prefix: "JIRA-"
 #     url_template: "https://yourcompany.atlassian.net/browse/JIRA-<num>"
 #     is_alphanumeric: false
-
 
 # --- Custom properties ---
 # Set custom properties for filtering/suborg matching.
