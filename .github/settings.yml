@@ -12,8 +12,8 @@
 # --- Repository defaults ---
 # See https://docs.github.com/en/rest/repos/repos#create-an-organization-repository
 repository:
-  private: true
-  visibility: private
+  private: false
+  visibility: public
   default_branch: main
 
   has_issues: true

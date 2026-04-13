@@ -18,9 +18,9 @@ repository:
   topics:
     - nodejs
     - api
-  # Override visibility (defaults to org-level private)
-  # private: false
-  # visibility: public
+  # Override visibility (defaults to org-level public)
+  # private: true
+  # visibility: private
 
 
 # --- Teams ---
