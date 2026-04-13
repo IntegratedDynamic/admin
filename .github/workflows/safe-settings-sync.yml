@@ -21,6 +21,8 @@ jobs:
   sync:
     name: Sync org settings${{ github.event.inputs.nop == 'true' && ' (dry-run)' || '' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     env:
       SAFE_SETTINGS_VERSION: 2.1.17
       SAFE_SETTINGS_CODE_DIR: ${{ github.workspace }}/.safe-settings-code
