@@ -9,12 +9,17 @@ on:
   # (catches manual changes made directly in the GitHub UI)
   schedule:
     - cron: "0 */4 * * *"
-  # Allow manual trigger from the Actions tab
-  workflow_dispatch: {}
+  # Allow manual trigger — optionally in dry-run (NOP) mode to preview diffs
+  workflow_dispatch:
+    inputs:
+      nop:
+        description: 'Dry-run mode: show diffs without applying (true/false)'
+        required: false
+        default: 'false'
 
 jobs:
   sync:
-    name: Sync org settings
+    name: Sync org settings${{ github.event.inputs.nop == 'true' && ' (dry-run)' || '' }}
     runs-on: ubuntu-latest
     env:
       SAFE_SETTINGS_VERSION: 2.1.17
@@ -52,5 +57,7 @@ jobs:
           GITHUB_CLIENT_SECRET: ${{ secrets.SAFE_SETTINGS_GITHUB_CLIENT_SECRET }}
           WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
           ADMIN_REPO: admin
-          # deployment-settings.yml is at the root of this (admin) repo
           DEPLOYMENT_CONFIG_FILE: ${{ github.workspace }}/deployment-settings.yml
+          # Set to true via workflow_dispatch to preview changes without applying
+          FULL_SYNC_NOP: ${{ github.event.inputs.nop || 'false' }}
+          LOG_LEVEL: info
