@@ -34,8 +34,7 @@ branches:
         require_last_push_approval: false
       required_status_checks:
         strict: true   # Branch must be up to date with main before merge
-        contexts:
-          - "{{EXTERNALLY_DEFINED}}"
+        contexts: []
       enforce_admins: false
       required_conversation_resolution: true
       allow_force_pushes: false

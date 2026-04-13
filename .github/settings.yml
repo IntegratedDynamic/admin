@@ -108,8 +108,8 @@ labels:
 
 # --- Branch protection (default branch) ---
 # Baseline: 1 review, conversations must be resolved, no force pushes.
-# CI checks are intentionally left as EXTERNALLY_DEFINED so each repo's
-# own workflow registers its required checks without safe-settings overwriting them.
+# CI check contexts are left empty — each repo's own workflow registers
+# required checks directly. safe-settings manages strict mode only.
 #
 # Suborgs can override this (e.g. backend requires strict=true, infra requires 2 reviews).
 branches:
@@ -126,8 +126,7 @@ branches:
           teams: []
       required_status_checks:
         strict: false
-        contexts:
-          - "{{EXTERNALLY_DEFINED}}"
+        contexts: []
       enforce_admins: false
       required_conversation_resolution: true
       allow_force_pushes: false

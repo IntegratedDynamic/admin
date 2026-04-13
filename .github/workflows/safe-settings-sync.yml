@@ -60,4 +60,4 @@ jobs:
           DEPLOYMENT_CONFIG_FILE: ${{ github.workspace }}/deployment-settings.yml
           # Set to true via workflow_dispatch to preview changes without applying
           FULL_SYNC_NOP: ${{ github.event.inputs.nop || 'false' }}
-          LOG_LEVEL: info
+          LOG_LEVEL: ${{ github.event.inputs.nop == 'true' && 'debug' || 'info' }}
