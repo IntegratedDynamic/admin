@@ -236,10 +236,15 @@ The workflow triggers automatically. Check the Actions tab for the first sync ru
 
 - **No subdirectories inside `.github/suborgs/`** — safe-settings has a bug where a directory in
   that folder causes all alphabetically-subsequent `.yml` files to be silently skipped. Keep the
-  suborgs folder flat.
+  suborgs folder flat. **Not fixed in any released version** — root cause is `return subOrgConfigs`
+  instead of `continue` in `getSubOrgConfigs()`.
 - **`contexts: []` not `contexts: ["some-placeholder"]`** — specifying a non-existent check context
-  causes NOP mode to crash.
+  causes NOP mode to crash. No upstream issue filed; no fix in any version.
 - **`bypass_pull_request_allowances` only in `settings.yml`** — if you add it to both `settings.yml`
   and a suborg file, safe-settings' deep merge will concatenate the arrays and produce duplicates.
-- safe-settings version is pinned to `2.1.17`. Don't upgrade to `2.1.19+` — probot v14 changed log
-  initialization in a way that breaks the full-sync entrypoint.
+  **Not fixed** — tracked in upstream [#722](https://github.com/github/safe-settings/issues/722) and
+  [#723](https://github.com/github/safe-settings/issues/723) (both open).
+- **probot v14 / full-sync** — versions 2.1.19 and 2.1.20-rc.3 **fix** the probot v14 breakage via
+  [PR #949](https://github.com/github/safe-settings/pull/949) (migrated all octokit calls to the
+  `.rest.*` namespace). Upgrading from 2.1.17 to 2.1.19+ is now safe from this angle, but the three
+  caveats above are **still present** in those versions — verify before upgrading.
