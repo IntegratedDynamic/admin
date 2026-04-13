@@ -15,13 +15,12 @@ suborgrepos:
   - "*-server"
 
 # Teams automatically added to every backend repo.
-# These teams must exist in the GitHub org.
-# Remove or adjust based on your actual team structure.
-teams:
-  - name: engineering
-    permission: push
-  - name: platform
-    permission: admin
+# Uncomment once teams exist in the org (Settings > Teams).
+# teams:
+#   - name: engineering
+#     permission: push
+#   - name: platform
+#     permission: admin
 
 # Stricter than org default: branches must be up to date (strict: true),
 # ensuring CI always runs on the latest main before merge.

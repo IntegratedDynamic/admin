@@ -1,0 +1,41 @@
+# deployment-settings.yml
+# Controls safe-settings app behavior (local to the app process, not in the admin repo).
+# Restart the app after modifying this file.
+#
+# For k8s: mount this file as a ConfigMap volume, or bake it into the image.
+# The path can be overridden with the DEPLOYMENT_CONFIG_FILE env variable.
+
+# Repos safe-settings will never touch.
+# Add any repo that manages its own settings independently.
+restrictedRepos:
+  exclude:
+    - admin          # the settings repo itself
+    - .github        # org-level .github repo
+    - safe-settings  # the app's own repo
+    - gitops         # ArgoCD repo — managed by the platform team directly
+    - infrastructure # Terraform repo — managed by the platform team directly
+
+# configvalidators: validate a setting value in isolation.
+# The script receives `baseconfig` (the setting being applied) and must return true/false.
+configvalidators:
+  - plugin: collaborators
+    error: |
+      Collaborators cannot be granted admin permission directly.
+      Use a team with admin access instead.
+    script: |
+      return baseconfig.permission !== 'admin'
+
+# overridevalidators: validate when a suborg or repo overrides an org-level setting.
+# The script receives `baseconfig` (org/suborg value) and `overrideconfig` (the override).
+overridevalidators:
+  - plugin: branches
+    error: |
+      required_approving_review_count cannot be lowered below the org baseline.
+      Open a PR to discuss relaxing branch protection before applying it.
+    script: |
+      const base = baseconfig.protection?.required_pull_request_reviews?.required_approving_review_count
+      const override = overrideconfig.protection?.required_pull_request_reviews?.required_approving_review_count
+      if (base && override) {
+        return override >= base
+      }
+      return true

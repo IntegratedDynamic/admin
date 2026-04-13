@@ -15,11 +15,11 @@ suborgrepos:
   - "*-mobile"
   - "*-extension"
 
-teams:
-  - name: engineering
-    permission: push
-  - name: platform
-    permission: admin
+# teams:
+#   - name: engineering
+#     permission: push
+#   - name: platform
+#     permission: admin
 
 # Same protection as backend. Frontend deployments can be just as critical.
 branches:

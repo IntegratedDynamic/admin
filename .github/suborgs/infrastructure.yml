@@ -15,11 +15,11 @@ suborgrepos:
   - "*-infra"
   - "platform-*"
 
-teams:
-  - name: platform
-    permission: admin
-  - name: engineering
-    permission: push   # Engineers can read and propose changes, platform approves
+# teams:
+#   - name: platform
+#     permission: admin
+#   - name: engineering
+#     permission: push   # Engineers can read and propose changes, platform approves
 
 # Stricter: 2 reviews required, last-push approval enforced.
 # Infra changes have blast radius — an extra pair of eyes is worth it.
