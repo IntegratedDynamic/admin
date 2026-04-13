@@ -33,7 +33,8 @@ branches:
         require_last_push_approval: true   # Last commit must be approved by someone else
         bypass_pull_request_allowances:
           apps: []
-          users: []
+          users:
+            - nbrieussel
           teams: []
       required_status_checks:
         strict: true
