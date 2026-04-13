@@ -32,11 +32,7 @@ branches:
         dismiss_stale_reviews: true
         require_code_owner_reviews: false
         require_last_push_approval: false
-        bypass_pull_request_allowances:
-          apps: []
-          users:
-            - nbrieussel
-          teams: []
+
       required_status_checks:
         strict: true   # Branch must be up to date with main before merge
         contexts: []

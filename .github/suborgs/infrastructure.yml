@@ -31,11 +31,7 @@ branches:
         dismiss_stale_reviews: true
         require_code_owner_reviews: true   # CODEOWNERS file should designate platform team
         require_last_push_approval: true   # Last commit must be approved by someone else
-        bypass_pull_request_allowances:
-          apps: []
-          users:
-            - nbrieussel
-          teams: []
+
       required_status_checks:
         strict: true
         contexts: []
