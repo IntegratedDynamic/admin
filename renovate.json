@@ -1,0 +1,26 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "regexManagers": [
+    {
+      "fileMatch": ["^\\.github/workflows/.+\\.yml$"],
+      "matchStrings": ["SAFE_SETTINGS_VERSION: (?<currentValue>[^\\s]+)"],
+      "datasourceTemplate": "github-tags",
+      "depNameTemplate": "github/safe-settings",
+      "versioningTemplate": "semver"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchDepNames": ["github/safe-settings"],
+      "automerge": false,
+      "minimumReleaseAge": "7 days",
+      "labels": ["renovate"]
+    },
+    {
+      "matchPackageNames": ["prettier"],
+      "automerge": true,
+      "automergeType": "branch"
+    }
+  ]
+}
