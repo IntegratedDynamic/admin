@@ -43,9 +43,7 @@ jobs:
         working-directory: ${{ env.SAFE_SETTINGS_CODE_DIR }}
 
       - name: Run dry-run (NOP)
-        run: |
-          set -o pipefail
-          npm run full-sync 2>&1 | tee /tmp/dry-run.log
+        run: npm run full-sync 2>&1 | tee /tmp/dry-run.log
         working-directory: ${{ env.SAFE_SETTINGS_CODE_DIR }}
         env:
           GH_ORG: ${{ vars.SAFE_SETTINGS_GH_ORG }}
