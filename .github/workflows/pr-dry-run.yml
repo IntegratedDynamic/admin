@@ -1,0 +1,68 @@
+name: Dry-run gate
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  dry-run:
+    name: Safe-settings dry-run
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    # Do not run on fork PRs — secrets are not available there
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    env:
+      SAFE_SETTINGS_VERSION: 2.1.17
+      SAFE_SETTINGS_CODE_DIR: ${{ github.workspace }}/.safe-settings-code
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Checkout safe-settings app
+        uses: actions/checkout@v4
+        with:
+          repository: github/safe-settings
+          ref: ${{ env.SAFE_SETTINGS_VERSION }}
+          path: ${{ env.SAFE_SETTINGS_CODE_DIR }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: ${{ env.SAFE_SETTINGS_CODE_DIR }}/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ${{ env.SAFE_SETTINGS_CODE_DIR }}
+
+      - name: Run dry-run (NOP)
+        run: |
+          set -o pipefail
+          npm run full-sync 2>&1 | tee /tmp/dry-run.log
+        working-directory: ${{ env.SAFE_SETTINGS_CODE_DIR }}
+        env:
+          GH_ORG: ${{ vars.SAFE_SETTINGS_GH_ORG }}
+          APP_ID: ${{ vars.SAFE_SETTINGS_APP_ID }}
+          PRIVATE_KEY: ${{ secrets.SAFE_SETTINGS_PRIVATE_KEY }}
+          GITHUB_CLIENT_ID: ${{ vars.SAFE_SETTINGS_GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.SAFE_SETTINGS_GITHUB_CLIENT_SECRET }}
+          WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
+          ADMIN_REPO: admin
+          DEPLOYMENT_CONFIG_FILE: ${{ github.workspace }}/deployment-settings.yml
+          FULL_SYNC_NOP: "true"
+          LOG_LEVEL: debug
+
+      - name: Fail if config changes detected
+        run: |
+          if grep -q "There are changes for branch" /tmp/dry-run.log; then
+            echo "Config changes detected — review the dry-run output above."
+            grep "There are changes for branch" /tmp/dry-run.log
+            exit 1
+          fi
