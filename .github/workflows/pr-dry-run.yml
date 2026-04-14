@@ -59,10 +59,15 @@ jobs:
           FULL_SYNC_NOP: "true"
           LOG_LEVEL: debug
 
-      - name: Fail if config changes detected
+      # Runs even if the previous step crashed, so changes are always surfaced.
+      # continue-on-error: finding diffs is informational, not a merge blocker —
+      # a human must review but the PR is not blocked.
+      - name: Report config changes
+        if: always()
+        continue-on-error: true
         run: |
           if grep -q "There are changes for branch" /tmp/dry-run.log; then
-            echo "Config changes detected — review the dry-run output above."
+            echo "::warning::Config changes detected — human review required before merging"
             grep "There are changes for branch" /tmp/dry-run.log
             exit 1
           fi
