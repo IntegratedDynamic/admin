@@ -68,7 +68,8 @@ Only declare what **changes** at each level — everything else is inherited via
 
 Controls the safe-settings **process** (not individual repos):
 
-- `restrictedRepos.exclude` — repos safe-settings will never touch (currently: `admin`, `.github`)
+- `restrictedRepos.exclude` — repos safe-settings will never touch (currently: `.github` only —
+  `admin` is managed like any other repo)
 - `configvalidators` — validate a single setting value (e.g. block admin collaborator permission)
 - `overridevalidators` — validate when a suborg/repo overrides an org setting (e.g. block lowering
   `required_approving_review_count` below org baseline)
