@@ -90,10 +90,10 @@ These are **already worked around** in this repo — do not undo them:
    (concatenates, not replaces). If set in both `settings.yml` and a suborg file, `nbrieussel` ends
    up listed twice and the API rejects it. Set bypass **only** in `settings.yml`.
 
-4. **probot v14 full-sync break** — fixed in 2.1.19+ via
-   [PR #949](https://github.com/github/safe-settings/pull/949). The version is currently pinned to
-   `2.1.17` in `.github/workflows/safe-settings-sync.yml` (`SAFE_SETTINGS_VERSION`). Upgrading to
-   `2.1.19` is safe; always do a dry-run first.
+4. **probot v14 full-sync break** — PR #949 claimed to fix this but 2.1.19 still crashes with
+   `TypeError: Cannot read properties of null (reading 'info') at performFullSync`. The octokit
+   `.rest.*` calls were fixed but `createProbot()` still initializes with a null logger. **Stay on
+   `2.1.17`** until a release actually boots cleanly in NOP mode.
 
 ## Open hygiene issues (tracked in this repo's GitHub Issues)
 
