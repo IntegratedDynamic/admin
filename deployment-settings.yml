@@ -9,10 +9,7 @@
 # Add any repo that manages its own settings independently.
 restrictedRepos:
   exclude:
-    - admin # the settings repo itself
     - .github # org-level .github repo
-    # safe-settings repo deleted — app runs from github/safe-settings via GitHub Actions
-    # gitops and infrastructure are now managed — remove to re-exclude
 
 # configvalidators: validate a setting value in isolation.
 # The script receives `baseconfig` (the setting being applied) and must return true/false.
